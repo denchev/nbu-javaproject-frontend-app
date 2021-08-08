@@ -14,8 +14,16 @@ function App() {
   return (
     <Router>
     <div className="App">
-      <Link to="/patient-login">Login as patient</Link>
-      <Link to="/doctor-login">Login as doctor</Link>
+      <div class="row">
+        <div class="col-6">
+        <Link to="/patient-login" className="btn btn-primary">Login as patient</Link>
+        </div>
+        <div class="col-6">
+        <Link to="/doctor-login" className="btn btn-primary">Login as doctor</Link>
+        </div>
+      </div>
+      
+      
     </div>
 
     <Switch>
