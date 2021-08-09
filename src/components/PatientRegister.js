@@ -8,9 +8,22 @@ import TimePicker from 'react-time-picker';
 class PatientRegister extends Component {
 
     state = {
+        patient: {
+            firstName: "",
+            lastName: "",
+            egn: "",
+            isInsured: false
+        },
+        doctorId: null,
         doctors: [],
         bookingDate: new Date(),
         bookingTime: null
+    }
+
+    constructor(props) {
+        super(props);
+
+        this.bookAppointment = this.bookAppointment.bind(this);
     }
 
     async componentDidMount() {
@@ -25,32 +38,81 @@ class PatientRegister extends Component {
         })
     }
 
+    async bookAppointment(event) {
+        event.preventDefault();
+
+        const body = JSON.stringify({
+            patient: this.state.patient,
+            appointment: {
+                date: this.state.bookingDate,
+                time: this.state.bookingTime,
+                doctor: this.state.doctorId
+            }
+        })
+
+        const result = await fetch('http://localhost:8080/api/v1/appointments', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: body
+        });
+    }
+
     render() {
         return (
             <form method="post">
                 <div className="mb-3">
                     <label className="form-label">First name</label>
-                    <input type="text" className="form-control" name="firstName" />
+                    <input type="text" className="form-control" name="firstName" onChange={(event) => {
+                        const patient = {...this.state.patient};
+                        patient.firstName = event.target.value;
+                        this.setState({
+                            patient: patient
+                        })
+                    }} />
                 </div>
 
                 <div className="mb-3">
                     <label className="form-label">Last name</label>
-                    <input type="text" className="form-control" name="lastName" />
+                    <input type="text" className="form-control" name="lastName" onChange={(event) => {
+                        const patient = {...this.state.patient};
+                        patient.lastName = event.target.value;
+                        this.setState({
+                            patient: patient
+                        })
+                    }} />
                 </div>
 
                 <div className="mb-3">
                     <label className="form-label">EGN</label>
-                    <input type="text" className="form-control" name="egn" />
+                    <input type="text" className="form-control" name="egn" onChange={(event) => {
+                        const patient = {...this.state.patient};
+                        patient.egn = event.target.value;
+                        this.setState({
+                            patient: patient
+                        })
+                    }} />
                 </div>
 
                 <div className="form-check">
                     <label className="form-check-label" htmlFor="patient-isInsured">Are you insured?</label>
-                    <input type="checkbox" className="form-check-input" name="isInsured" id="patient-isInsured" />
+                    <input type="checkbox" className="form-check-input" name="isInsured" id="patient-isInsured" onChange={(event) => {
+                        const patient = {...this.state.patient};
+                        patient.isInsured = event.target.checked;
+                        this.setState({
+                            patient: patient
+                        })
+                    }} />
                 </div>
 
                 <div className="mb-3">
                     <label className="form-label">Doctor</label>
-                    <select className="form-select">
+                    <select className="form-select" onChange={(event) => {
+                        this.setState({
+                            doctorId: event.target.value
+                        })
+                    }}>
                         <option>Select an available doctor</option>
                         {this.state.doctors.map(doctor => {
                             return (
@@ -74,7 +136,7 @@ class PatientRegister extends Component {
                     })} />
                 </div>
 
-                <button type="submit" className="btn btn-primary">Book an appointment</button>
+                <button type="submit" className="btn btn-primary" onClick={this.bookAppointment}>Book an appointment</button>
             </form>
         )
     }
