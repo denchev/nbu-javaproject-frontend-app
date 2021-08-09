@@ -15,12 +15,12 @@ function App() {
   return (
     <Router>
     <div className="App">
-      <div class="row">
-        <div class="col-6">
+      <div className="row">
+        <div className="col-6">
         <Link to="/patient/login" className="btn btn-primary">Login as patient</Link>
         <Link to="/patient/book" className="btn btn-info">Book an appointment</Link>
         </div>
-        <div class="col-6">
+        <div className="col-6">
         <Link to="/doctor-login" className="btn btn-primary">Login as doctor</Link>
         </div>
       </div>

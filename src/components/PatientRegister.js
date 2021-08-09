@@ -1,13 +1,16 @@
 import { Component } from "react";
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+import TimePicker from 'react-time-picker';
+
 class PatientRegister extends Component {
 
     state = {
-        doctors: []
-    }
-
-    constructor() {
-        super();
+        doctors: [],
+        bookingDate: new Date(),
+        bookingTime: null
     }
 
     async componentDidMount() {
@@ -51,10 +54,24 @@ class PatientRegister extends Component {
                         <option>Select an available doctor</option>
                         {this.state.doctors.map(doctor => {
                             return (
-                                <option value={doctor.id}>{doctor.firstName} {doctor.lastName} - {doctor.speciality.name}</option>
+                                <option key={doctor.id} value={doctor.id}>{doctor.firstName} {doctor.lastName} - {doctor.speciality.name}</option>
                             )
                         })}
                     </select>
+                </div>
+
+                <div className="mb-3">
+                    <label>Date</label>
+                    <DatePicker selected={this.state.bookingDate} onChange={(date) => this.setState({
+                        bookingDate: date
+                    })} />
+                </div>
+
+                <div className="mb-3">
+                    <label>Time</label>
+                    <TimePicker onChange={(time) => this.setState({
+                        bookingTime: time
+                    })} />
                 </div>
 
                 <button type="submit" className="btn btn-primary">Book an appointment</button>
