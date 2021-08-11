@@ -3,8 +3,6 @@ import { Component } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import TimePicker from 'react-time-picker';
-
 class PatientRegister extends Component {
 
     state = {
@@ -44,13 +42,12 @@ class PatientRegister extends Component {
         const body = JSON.stringify({
             patient: this.state.patient,
             appointment: {
-                date: this.state.bookingDate,
-                time: this.state.bookingTime,
+                date: JSON.stringify(this.state.bookingDate).split('T')[0].replace('"', '') + ' ' + this.state.bookingTime + ':00',
                 doctor: this.state.doctorId
             }
         })
 
-        const result = await fetch('http://localhost:8080/api/v1/appointments', {
+        const result = await fetch('http://localhost:8080/api/v1/appointments/book', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
@@ -124,16 +121,34 @@ class PatientRegister extends Component {
 
                 <div className="mb-3">
                     <label>Date</label>
-                    <DatePicker selected={this.state.bookingDate} onChange={(date) => this.setState({
+                    <DatePicker dateFormat="dd/MM/yyyy" selected={this.state.bookingDate} onChange={(date) => this.setState({
                         bookingDate: date
                     })} />
                 </div>
 
                 <div className="mb-3">
                     <label>Time</label>
-                    <TimePicker onChange={(time) => this.setState({
-                        bookingTime: time
-                    })} />
+                    <select className="" onChange={(event) => {
+                        this.setState({
+                            bookingTime: event.target.value
+                        })
+                    }}>
+                        <option>Select time</option>
+                        {(function () {
+                            const timeSlots = [];
+                            for(let i = 8; i <= 19; i++) {
+                                timeSlots.push(i);
+                            }
+                            return timeSlots;
+                        })().map(availableTime => {
+                            return (
+                                <>
+                                    <option value={availableTime + ":00"}>{availableTime + ":00"}</option>
+                                    <option value={availableTime + ":30"}>{availableTime + ":30"}</option>
+                                </>
+                            )
+                        })};
+                    </select>
                 </div>
 
                 <button type="submit" className="btn btn-primary" onClick={this.bookAppointment}>Book an appointment</button>
