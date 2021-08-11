@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React, { Component } from "react";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -6,6 +6,8 @@ import "react-datepicker/dist/react-datepicker.css";
 class PatientRegister extends Component {
 
     state = {
+        showConfirmationAlert: false,
+        showErrorAlert: false,
         patient: {
             firstName: "",
             lastName: "",
@@ -45,20 +47,40 @@ class PatientRegister extends Component {
                 date: JSON.stringify(this.state.bookingDate).split('T')[0].replace('"', '') + ' ' + this.state.bookingTime + ':00',
                 doctor: this.state.doctorId
             }
-        })
-
-        const result = await fetch('http://localhost:8080/api/v1/appointments/book', {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: body
         });
+
+        try {
+            const result = await fetch('http://localhost:8080/api/v1/appointments/book', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: body
+            }).catch(error => {
+                console.log(error);
+            });
+
+            const json = await result.json();
+
+            if (json.id) {
+                this.setState({
+                    showConfirmationAlert: true,
+                    showErrorAlert: false
+                })
+            }
+        } catch(e) {
+            this.setState({
+                showErrorAlert: true,
+                showConfirmationAlert: false
+            })
+        }
     }
 
     render() {
         return (
             <form method="post">
+                <div className={(this.state.showConfirmationAlert === false ? 'd-none' : '' ) + ' alert alert-success'}>Your reservation is confirmed.</div>
+                <div className={(this.state.showErrorAlert === false ? 'd-none' : '' ) + ' alert alert-danger'}>There is an issue with your appointmenet. Please try again later.</div>
                 <div className="mb-3">
                     <label className="form-label">First name</label>
                     <input type="text" className="form-control" name="firstName" onChange={(event) => {
@@ -128,12 +150,12 @@ class PatientRegister extends Component {
 
                 <div className="mb-3">
                     <label>Time</label>
-                    <select className="" onChange={(event) => {
+                    <select className="form-select" onChange={(event) => {
                         this.setState({
                             bookingTime: event.target.value
                         })
                     }}>
-                        <option>Select time</option>
+                        <option>---</option>
                         {(function () {
                             const timeSlots = [];
                             for(let i = 8; i <= 19; i++) {
@@ -142,10 +164,10 @@ class PatientRegister extends Component {
                             return timeSlots;
                         })().map(availableTime => {
                             return (
-                                <>
+                                <React.Fragment key={availableTime}>
                                     <option value={availableTime + ":00"}>{availableTime + ":00"}</option>
                                     <option value={availableTime + ":30"}>{availableTime + ":30"}</option>
-                                </>
+                                </React.Fragment>
                             )
                         })};
                     </select>

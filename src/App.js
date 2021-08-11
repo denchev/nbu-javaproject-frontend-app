@@ -1,6 +1,5 @@
 import './App.css';
 
-import PatientLogin from './components/PatientLogin';
 import DoctorLogin from './components/DoctorLogin';
 import PatientRegister from './components/PatientRegister';
 
@@ -17,7 +16,6 @@ function App() {
     <div className="App">
       <div className="row">
         <div className="col-6">
-        <Link to="/patient/login" className="btn btn-primary">Login as patient</Link>
         <Link to="/patient/book" className="btn btn-info">Book an appointment</Link>
         </div>
         <div className="col-6">
@@ -29,9 +27,6 @@ function App() {
     </div>
 
     <Switch>
-      <Route path="/patient/login">
-        <PatientLogin />
-      </Route>
       <Route path="/patient/book">
         <PatientRegister />
       </Route>
