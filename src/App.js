@@ -19,18 +19,16 @@ function App() {
         <Link to="/patient/book" className="btn btn-info">Book an appointment</Link>
         </div>
         <div className="col-6">
-        <Link to="/doctor-login" className="btn btn-primary">Login as doctor</Link>
+        <Link to="/doctor/login" className="btn btn-primary">Login as doctor</Link>
         </div>
       </div>
-      
-      
     </div>
 
     <Switch>
       <Route path="/patient/book">
         <PatientRegister />
       </Route>
-      <Route path="/doctor-login">
+      <Route path="/doctor/login">
         <DoctorLogin />
       </Route>
     </Switch>
