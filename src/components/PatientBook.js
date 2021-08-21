@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-class PatientRegister extends Component {
+class PatientBook extends Component {
 
     state = {
         showConfirmationAlert: false,
@@ -33,9 +33,11 @@ class PatientRegister extends Component {
             }
         });
         const json = await result.json();
-        this.setState({
-            doctors: json
-        })
+        if (!json.error) {
+            this.setState({
+                doctors: json
+            });
+        }
     }
 
     async bookAppointment(event) {
@@ -133,7 +135,7 @@ class PatientRegister extends Component {
                         })
                     }}>
                         <option>Select an available doctor</option>
-                        {this.state.doctors.map(doctor => {
+                        {(this.state.doctors || []).map(doctor => {
                             return (
                                 <option key={doctor.id} value={doctor.id}>{doctor.firstName} {doctor.lastName} - {doctor.speciality.name}</option>
                             )
@@ -179,4 +181,4 @@ class PatientRegister extends Component {
     }
 }
 
-export default PatientRegister;
+export default PatientBook;
